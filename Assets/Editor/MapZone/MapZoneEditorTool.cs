@@ -42,7 +42,8 @@ public class MapZoneEditorTool : EditorWindow
             MapZone newZone = new MapZone
             {
                 zoneName = $"Zone {zoneData.zones.Count + 1}",
-                zoneColor = UnityEngine.Random.ColorHSV(),
+                // 알파 범위를 0.3~0.6 사이로 지정
+                zoneColor = UnityEngine.Random.ColorHSV(0f, 1f, 0.8f, 1f, 0.8f, 1f, 0.3f, 0.6f),
                 controlPoints = new List<Vector3>()
             };
             zoneData.zones.Add(newZone);
