@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using LibTessDotNet;
-using System.Diagnostics;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class MapZoneRenderer : MonoBehaviour
 {
     public MapZoneData zoneData;
     public Material zoneMaterial;
+    public Material boundaryMaterial; // 테두리 강조용 머티리얼
 
     void Start()
     {
         if (zoneData == null || zoneData.zones.Count == 0)
         {
-           // Debug.LogWarning("MapZoneData가 비어있습니다.");
+            // Debug.LogWarning("MapZoneData가 비어있습니다.");
             return;
         }
 
@@ -21,10 +21,11 @@ public class MapZoneRenderer : MonoBehaviour
 
         foreach (var zone in zoneData.zones)
         {
-            if (zone.controlPoints.Count < 3) continue;
+            if (zone.allPoints.Count < 3) continue;
 
-            // 곡선 보간된 점 목록
-            List<Vector3> curvedPoints = GenerateSmoothCurve(zone.controlPoints, 10);
+            // 곡선 보간된 점 목록 (메쉬 생성용)
+            List<Vector3> controlPoints = GetOrderedPoints(zone);
+            List<Vector3> curvedPoints = GenerateSmoothCurve(controlPoints, 10);
 
             GameObject zoneObj = new GameObject(zone.zoneName);
             zoneObj.transform.SetParent(transform);
@@ -32,6 +33,7 @@ public class MapZoneRenderer : MonoBehaviour
             var mf = zoneObj.AddComponent<MeshFilter>();
             var mr = zoneObj.AddComponent<MeshRenderer>();
 
+            // 메쉬 생성
             Mesh mesh = CreateZoneMesh(curvedPoints, zoneIndex);
             mf.mesh = mesh;
 
@@ -43,13 +45,37 @@ public class MapZoneRenderer : MonoBehaviour
 
             mr.material = mat; // 꼭 렌더러에 할당해줘야 함
 
+            // 테두리 선 그리기
+            DrawBoundaryLine(curvedPoints, zoneIndex);
 
             zoneIndex++;
         }
 
-       // Debug.Log("✅ 시작 설정 완료: " + zoneData.zones.Count + "개의 존 생성됨");
+        // Debug.Log("zoneData.zones.Count + "개의 구역 생성됨");
+    }
+    // zone의 allPoints 기반으로 실제 좌표들을 추출
+    List<Vector3> GetOrderedPoints(MapZone zone)
+    {
+        List<Vector3> result = new();
+
+        foreach (var pointRef in zone.allPoints)
+        {
+            if (pointRef.isShared)
+            {
+                if (pointRef.index >= 0 && pointRef.index < zoneData.sharedPoints.Count)
+                    result.Add(zoneData.sharedPoints[pointRef.index]);
+            }
+            else
+            {
+                if (pointRef.index >= 0 && pointRef.index < zone.localPoints.Count)
+                    result.Add(zone.localPoints[pointRef.index]);
+            }
+        }
+
+        return result;
     }
 
+    // 곡선 보간 함수
     List<Vector3> GenerateSmoothCurve(List<Vector3> points, int subdivisions)
     {
         List<Vector3> result = new();
@@ -72,6 +98,7 @@ public class MapZoneRenderer : MonoBehaviour
         return result;
     }
 
+    // Catmull-Rom 보간
     Vector3 CatmullRom(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, float t)
     {
         return 0.5f * (
@@ -82,6 +109,7 @@ public class MapZoneRenderer : MonoBehaviour
         );
     }
 
+    // 메쉬 생성
     Mesh CreateZoneMesh(List<Vector3> points, int zoneIndex)
     {
         Tess tess = new Tess();
@@ -99,15 +127,15 @@ public class MapZoneRenderer : MonoBehaviour
 
         if (tess.Vertices.Length == 0 || tess.Elements.Length == 0)
         {
-          //  Debug.LogWarning("⚠️ Tessellation 실패");
+            // Debug.LogWarning("⚠️ Tessellation 실패");
             return new Mesh();
         }
-
+        
         Vector3[] vertices = new Vector3[tess.Vertices.Length];
         for (int i = 0; i < tess.Vertices.Length; i++)
         {
             var v = tess.Vertices[i].Position;
-            vertices[i] = new Vector3((float)v.X, (float)v.Y, -0.01f * zoneIndex); // Z를 약간 낮게
+            vertices[i] = new Vector3((float)v.X, (float)v.Y, 0.01f * zoneIndex);
         }
 
         int[] indices = tess.Elements;
@@ -120,4 +148,37 @@ public class MapZoneRenderer : MonoBehaviour
         mesh.RecalculateBounds();
         return mesh;
     }
+
+    // 테두리 선 그리기
+    void DrawBoundaryLine(List<Vector3> points, int zoneIndex)
+    {
+        GameObject boundaryObj = new GameObject("Boundary_" + zoneIndex);
+        boundaryObj.transform.SetParent(transform);
+
+
+        LineRenderer lineRenderer = boundaryObj.AddComponent<LineRenderer>();
+        lineRenderer.material = boundaryMaterial;
+        lineRenderer.loop = true;
+
+        lineRenderer.positionCount = points.Count;
+
+        // 선 두께 설정
+        lineRenderer.startWidth = 0.05f;
+        lineRenderer.endWidth = 0.05f;
+
+
+
+        lineRenderer.alignment = LineAlignment.TransformZ;
+        boundaryObj.transform.forward = Camera.main.transform.forward;
+
+        // 정점 설정 (Z값 올려주기)
+        float zOffset = 0.1f + 0.02f * zoneIndex; // 충분히 큰 오프셋
+        for (int i = 0; i < points.Count; i++)
+        {
+            Vector3 p = points[i];
+            p.z += zOffset;
+            lineRenderer.SetPosition(i, p);
+        }
+    }
+
 }

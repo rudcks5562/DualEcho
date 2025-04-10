@@ -11,6 +11,9 @@ public class MapZoneEditorTool : EditorWindow
     private static bool isDragging = false;
     private static int draggingPointIndex = -1;
 
+    private static bool isPlacingSharedPoint = false;
+    private static int selectedSharedPointIndex = -1;
+
     [MenuItem("Tools/Map Zone Editor")]
     public static void ShowWindow()
     {
@@ -42,9 +45,10 @@ public class MapZoneEditorTool : EditorWindow
             MapZone newZone = new MapZone
             {
                 zoneName = $"Zone {zoneData.zones.Count + 1}",
-                // 알파 범위를 0.3~0.6 사이로 지정
                 zoneColor = UnityEngine.Random.ColorHSV(0f, 1f, 0.8f, 1f, 0.8f, 1f, 0.3f, 0.6f),
-                controlPoints = new List<Vector3>()
+                sharedPointIndices = new List<int>(),
+                localPoints = new List<Vector3>(),
+                allPoints = new List<MapZonePointRef>()
             };
             zoneData.zones.Add(newZone);
             selectedZoneIndex = zoneData.zones.Count - 1;
@@ -78,39 +82,59 @@ public class MapZoneEditorTool : EditorWindow
             AssetDatabase.SaveAssets();
         }
         GUILayout.EndHorizontal();
+
+        GUILayout.Space(10);
+        isPlacingSharedPoint = GUILayout.Toggle(isPlacingSharedPoint, "공용 포인트 추가 모드 (Space 키 전환 가능)");
     }
 
     private void OnSceneGUI(SceneView sceneView)
     {
-        if (zoneData == null) return;
+        if (zoneData == null || zoneData.zones.Count == 0) return;
 
         Event e = Event.current;
         Handles.zTest = UnityEngine.Rendering.CompareFunction.Always;
+
+        MapZone currentZone = zoneData.zones[selectedZoneIndex];
 
         for (int zoneIdx = 0; zoneIdx < zoneData.zones.Count; zoneIdx++)
         {
             MapZone zone = zoneData.zones[zoneIdx];
             Handles.color = zone.zoneColor;
 
-            if (zone.controlPoints.Count >= 2)
+            List<Vector3> resolvedPoints = ResolveAllPoints(zone);
+            if (resolvedPoints.Count >= 2)
             {
-                DrawCatmullRomOpen(zone.controlPoints.ToArray(), 10f, zone.zoneColor);
-
+                DrawCatmullRomOpen(resolvedPoints.ToArray(), 10f, zone.zoneColor);
             }
 
-            for (int i = 0; i < zone.controlPoints.Count; i++)
+            for (int i = 0; i < zone.allPoints.Count; i++)
             {
-                Vector3 point = zone.controlPoints[i];
+                Vector3 point = GetPoint(zone, zone.allPoints[i]);
                 float size = HandleUtility.GetHandleSize(point) * 0.1f;
 
                 if (Handles.Button(point, Quaternion.identity, size, size, Handles.SphereHandleCap))
                 {
-                    if (zoneIdx == selectedZoneIndex)
+                    if (isPlacingSharedPoint && zoneIdx != selectedZoneIndex)
+                    {
+                        MapZonePointRef refClicked = zone.allPoints[i];
+                        if (refClicked.isShared)
+                        {
+                            if (!currentZone.sharedPointIndices.Contains(refClicked.index))
+                            {
+                                currentZone.sharedPointIndices.Add(refClicked.index);
+                                currentZone.allPoints.Add(new MapZonePointRef { isShared = true, index = refClicked.index });
+                                EditorUtility.SetDirty(zoneData);
+                                e.Use();
+                                return;
+                            }
+                        }
+                    }
+                    else if (zoneIdx == selectedZoneIndex)
                     {
                         if (e.shift)
                         {
                             Undo.RecordObject(zoneData, "Remove Point");
-                            zone.controlPoints.RemoveAt(i);
+                            RemovePoint(zone, i);
                             e.Use();
                             return;
                         }
@@ -125,56 +149,102 @@ public class MapZoneEditorTool : EditorWindow
                 if (zoneIdx == selectedZoneIndex && isDragging && draggingPointIndex == i)
                 {
                     Undo.RecordObject(zoneData, "Move Point");
-                    zone.controlPoints[i] = Handles.PositionHandle(zone.controlPoints[i], Quaternion.identity);
+                    Vector3 newPos = Handles.PositionHandle(point, Quaternion.identity);
+                    SetPoint(zone, zone.allPoints[i], newPos);
                     SceneView.RepaintAll();
                 }
             }
+        }
 
-            if (zoneIdx == selectedZoneIndex && e.type == EventType.MouseUp)
-            {
-                isDragging = false;
-                draggingPointIndex = -1;
-            }
+        if (e.type == EventType.MouseUp)
+        {
+            isDragging = false;
+            draggingPointIndex = -1;
+        }
 
-            // Ctrl + 클릭으로 점 추가
-            if (zoneIdx == selectedZoneIndex && e.type == EventType.MouseDown && e.control && e.button == 0)
+        if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Space)
+        {
+            isPlacingSharedPoint = !isPlacingSharedPoint;
+            e.Use();
+        }
+
+        if (e.type == EventType.MouseDown && e.control && e.button == 0)
+        {
+            Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
+            Vector3 point = ray.origin + ray.direction * 10;
+            point.z = 0;
+            Undo.RecordObject(zoneData, "Add Point");
+            if (isPlacingSharedPoint)
             {
-                Ray ray = HandleUtility.GUIPointToWorldRay(e.mousePosition);
-                if (Physics.Raycast(ray, out RaycastHit hit))
-                {
-                    AddPointToZone(zone, hit.point);
-                }
-                else
-                {
-                    Vector3 point = ray.origin + ray.direction * 10;
-                    point.z = 0;
-                    AddPointToZone(zone, point);
-                }
-                e.Use();
+                zoneData.sharedPoints.Add(point);
+                int idx = zoneData.sharedPoints.Count - 1;
+                currentZone.sharedPointIndices.Add(idx);
+                currentZone.allPoints.Add(new MapZonePointRef { isShared = true, index = idx });
             }
+            else
+            {
+                currentZone.localPoints.Add(point);
+                int idx = currentZone.localPoints.Count - 1;
+                currentZone.allPoints.Add(new MapZonePointRef { isShared = false, index = idx });
+            }
+            EditorUtility.SetDirty(zoneData);
+            e.Use();
         }
     }
 
-    private void AddPointToZone(MapZone zone, Vector3 point)
+    private Vector3 GetPoint(MapZone zone, MapZonePointRef pointRef)
     {
-        Undo.RecordObject(zoneData, "Add Point");
-        zone.controlPoints.Add(point);
-        EditorUtility.SetDirty(zoneData);
-        SceneView.RepaintAll();
+        return pointRef.isShared ? zoneData.sharedPoints[pointRef.index] : zone.localPoints[pointRef.index];
+    }
+
+    private void SetPoint(MapZone zone, MapZonePointRef pointRef, Vector3 newPos)
+    {
+        if (pointRef.isShared)
+        {
+            zoneData.sharedPoints[pointRef.index] = newPos;
+        }
+        else
+        {
+            zone.localPoints[pointRef.index] = newPos;
+        }
+    }
+
+    private void RemovePoint(MapZone zone, int i)
+    {
+        var pointRef = zone.allPoints[i];
+        if (!pointRef.isShared)
+        {
+            zone.localPoints.RemoveAt(pointRef.index);
+            for (int j = 0; j < zone.allPoints.Count; j++)
+            {
+                if (!zone.allPoints[j].isShared && zone.allPoints[j].index > pointRef.index)
+                    zone.allPoints[j].index--;
+            }
+        }
+        zone.allPoints.RemoveAt(i);
+    }
+
+    private List<Vector3> ResolveAllPoints(MapZone zone)
+    {
+        List<Vector3> result = new();
+        foreach (var p in zone.allPoints)
+        {
+            result.Add(GetPoint(zone, p));
+        }
+        return result;
     }
 
     private void DrawCatmullRomOpen(Vector3[] points, float thickness, Color color)
     {
-        int count = points.Length;
-        if (count < 2) return;
+        if (points.Length < 2) return;
 
         List<Vector3> curvePoints = new();
-        for (int i = 0; i < count - 1; i++)
+        for (int i = 0; i < points.Length - 1; i++)
         {
             Vector3 p0 = i == 0 ? points[i] : points[i - 1];
             Vector3 p1 = points[i];
             Vector3 p2 = points[i + 1];
-            Vector3 p3 = (i + 2 < count) ? points[i + 2] : points[i + 1]; // 끝점 반복
+            Vector3 p3 = (i + 2 < points.Length) ? points[i + 2] : points[i + 1];
 
             for (int j = 0; j < 10; j++)
             {
@@ -194,5 +264,5 @@ public class MapZoneEditorTool : EditorWindow
             Handles.DrawAAPolyLine(thickness, curvePoints[i], curvePoints[i + 1]);
         }
     }
-
 }
+// 공유점 추가 삭제 및 연결에 대한 작업 필요.

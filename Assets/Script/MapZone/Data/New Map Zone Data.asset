@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1fe5aba6cdef02442ab25c9334bf9ce7, type: 3}
+  m_Name: New Map Zone Data
+  m_EditorClassIdentifier: 
+  sharedPoints: []
+  zones:
+  - zoneName: Zone 1
+    zoneColor: {r: 0.16952763, g: 0.34719953, b: 0.9229087, a: 0.39920697}
+    sharedPointIndices: 
+    localPoints:
+    - {x: -1.8085833, y: 5.9364834, z: 0}
+    - {x: -1.6015728, y: 5.331015, z: 0}
+    - {x: -1.550054, y: 4.73171, z: 0}
+    - {x: -2.1472013, y: 4.494334, z: 0}
+    - {x: -2.51668, y: 5.1116486, z: 0}
+    - {x: -2.3632255, y: 5.720799, z: 0}
+    allPoints:
+    - isShared: 0
+      index: 0
+    - isShared: 0
+      index: 1
+    - isShared: 0
+      index: 2
+    - isShared: 0
+      index: 3
+    - isShared: 0
+      index: 4
+    - isShared: 0
+      index: 5
+  - zoneName: Zone 2
+    zoneColor: {r: 1, g: 0, b: 0.16443014, a: 0.6392157}
+    sharedPointIndices: 
+    localPoints:
+    - {x: -3.0423567, y: 6.0598965, z: 0}
+    - {x: -3.3968, y: 5.6177998, z: 0}
+    - {x: -3.3470633, y: 5.0348215, z: 0}
+    - {x: -3.1608076, y: 4.6068034, z: 0}
+    allPoints:
+    - isShared: 0
+      index: 0
+    - isShared: 0
+      index: 1
+    - isShared: 0
+      index: 2
+    - isShared: 0
+      index: 3
