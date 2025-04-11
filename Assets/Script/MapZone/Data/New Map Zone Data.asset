@@ -12,18 +12,64 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fe5aba6cdef02442ab25c9334bf9ce7, type: 3}
   m_Name: New Map Zone Data
   m_EditorClassIdentifier: 
-  sharedPoints: []
+  sharedPoints:
+  - {x: 1.5585779, y: 17.184113, z: 0}
+  - {x: -3.688561, y: 20.059221, z: 0}
+  - {x: -4.3020654, y: 22.973368, z: 0}
   zones:
   - zoneName: Zone 1
-    zoneColor: {r: 0.16952763, g: 0.34719953, b: 0.9229087, a: 0.39920697}
-    sharedPointIndices: 
+    zoneColor: {r: 0.85221773, g: 0.091353446, b: 0.38976115, a: 0.38651767}
+    sharedPointIndices: 0100000002000000
     localPoints:
-    - {x: -1.8085833, y: 5.9364834, z: 0}
-    - {x: -1.6015728, y: 5.331015, z: 0}
-    - {x: -1.550054, y: 4.73171, z: 0}
-    - {x: -2.1472013, y: 4.494334, z: 0}
-    - {x: -2.51668, y: 5.1116486, z: 0}
-    - {x: -2.3632255, y: 5.720799, z: 0}
+    - {x: -4.53213, y: 24.583813, z: 0}
+    - {x: -1.541296, y: 24.583813, z: 0}
+    - {x: 3.1366746, y: 24.890564, z: 0}
+    - {x: 7.2778287, y: 24.660501, z: 0}
+    - {x: 7.8146453, y: 22.7433, z: 0}
+    - {x: 6.8177004, y: 20.519346, z: 0}
+    - {x: 5.1645026, y: 19.23221, z: 0}
+    - {x: 4.060004, y: 18.65678, z: 0}
+    allPoints:
+    - isShared: 1
+      index: 1
+    - isShared: 1
+      index: 2
+    - isShared: 0
+      index: 0
+    - isShared: 0
+      index: 1
+    - isShared: 0
+      index: 2
+    - isShared: 0
+      index: 3
+    - isShared: 0
+      index: 4
+    - isShared: 0
+      index: 5
+    - isShared: 0
+      index: 6
+    - isShared: 0
+      index: 7
+  - zoneName: Zone 2
+    zoneColor: {r: 0.52118915, g: 0.9386733, b: 0.10535397, a: 0.34322286}
+    sharedPointIndices: 000000000100000002000000
+    localPoints:
+    - {x: 8.811589, y: 5.4118023, z: 0}
+    - {x: 8.198085, y: 8.862764, z: 0}
+    - {x: 7.507893, y: 11.086718, z: 0}
+    - {x: 6.5109487, y: 12.773853, z: 0}
+    - {x: 5.2839394, y: 14.767742, z: 0}
+    - {x: 3.7501788, y: 16.301504, z: 0}
+    - {x: -6.449331, y: 22.819988, z: 0}
+    - {x: -7.292899, y: 20.902786, z: 0}
+    - {x: -9.440165, y: 18.295393, z: 0}
+    - {x: -9.670228, y: 16.224815, z: 0}
+    - {x: -6.449331, y: 11.700222, z: 0}
+    - {x: -3.228433, y: 9.322891, z: 0}
+    - {x: -2.9983685, y: 6.1019945, z: 0}
+    - {x: 0.6826573, y: 5.10505, z: 0}
+    - {x: 5.053876, y: 5.028362, z: 0}
+    - {x: 7.6612687, y: 5.028362, z: 0}
     allPoints:
     - isShared: 0
       index: 0
@@ -37,20 +83,29 @@ MonoBehaviour:
       index: 4
     - isShared: 0
       index: 5
-  - zoneName: Zone 2
-    zoneColor: {r: 1, g: 0, b: 0.16443014, a: 0.6392157}
-    sharedPointIndices: 
-    localPoints:
-    - {x: -3.0423567, y: 6.0598965, z: 0}
-    - {x: -3.3968, y: 5.6177998, z: 0}
-    - {x: -3.3470633, y: 5.0348215, z: 0}
-    - {x: -3.1608076, y: 4.6068034, z: 0}
-    allPoints:
-    - isShared: 0
+    - isShared: 1
       index: 0
-    - isShared: 0
+    - isShared: 1
       index: 1
-    - isShared: 0
+    - isShared: 1
       index: 2
     - isShared: 0
-      index: 3
+      index: 6
+    - isShared: 0
+      index: 7
+    - isShared: 0
+      index: 8
+    - isShared: 0
+      index: 9
+    - isShared: 0
+      index: 10
+    - isShared: 0
+      index: 11
+    - isShared: 0
+      index: 12
+    - isShared: 0
+      index: 13
+    - isShared: 0
+      index: 14
+    - isShared: 0
+      index: 15

@@ -86,76 +86,208 @@ public class MapZoneEditorTool : EditorWindow
         GUILayout.Space(10);
         isPlacingSharedPoint = GUILayout.Toggle(isPlacingSharedPoint, "공용 포인트 추가 모드 (Space 키 전환 가능)");
     }
+    private void DrawZone(int zoneIdx, Event e, bool isSelected = false)
+    {
+        MapZone zone = zoneData.zones[zoneIdx];
+        Handles.color = zone.zoneColor;
+        List<Vector3> resolvedPoints = ResolveAllPoints(zone);
+        if (resolvedPoints.Count >= 2)
+        {
+            DrawCatmullRomOpen(resolvedPoints.ToArray(), 10f, zone.zoneColor);
+        }
 
+        for (int i = 0; i < zone.allPoints.Count; i++)
+        {
+            Vector3 point = GetPoint(zone, zone.allPoints[i]);
+            float size = HandleUtility.GetHandleSize(point) * 0.1f;
+
+            if (Handles.Button(point, Quaternion.identity, size, size, Handles.SphereHandleCap))
+            {
+                if (isPlacingSharedPoint)
+                {
+                    // 기존 공유 포인트 추가 로직 유지
+                    if (!isSelected)
+                    {
+                        var clickedRef = zone.allPoints[i];
+                        if (clickedRef.isShared)
+                        {
+                            if (!zoneData.zones[selectedZoneIndex].sharedPointIndices.Contains(clickedRef.index))
+                            {
+                                zoneData.zones[selectedZoneIndex].sharedPointIndices.Add(clickedRef.index);
+                                zoneData.zones[selectedZoneIndex].allPoints.Add(new MapZonePointRef
+                                {
+                                    isShared = true,
+                                    index = clickedRef.index
+                                });
+                                EditorUtility.SetDirty(zoneData);
+                                e.Use();
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            ConvertLocalToShared(zone, i, zoneData.zones[selectedZoneIndex]);
+                            e.Use();
+                            return;
+                        }
+                    }
+                }
+                else if (isSelected)
+                {
+                    if (e.shift)
+                    {
+                        Undo.RecordObject(zoneData, "Remove Point");
+
+                        if (e.control)
+                        {
+                            // Shift+Ctrl+클릭: 모든 영역에서 삭제
+                            RemovePointFromAllZones(zone, i);
+                        }
+                        else
+                        {
+                            // Shift+클릭: 현재 영역에서만 삭제
+                            RemovePointFromCurrentZone(zone, i);
+                        }
+
+                        e.Use();
+                        return;
+                    }
+                    else
+                    {
+                        draggingPointIndex = i;
+                        isDragging = true;
+                    }
+                }
+            }
+
+            if (isSelected && isDragging && draggingPointIndex == i)
+            {
+                Undo.RecordObject(zoneData, "Move Point");
+                Vector3 newPos = Handles.PositionHandle(point, Quaternion.identity);
+                SetPoint(zone, zone.allPoints[i], newPos);
+                SceneView.RepaintAll();
+            }
+        }
+    }
+
+    // 현재 영역에서만 포인트 삭제
+    private void RemovePointFromCurrentZone(MapZone zone, int pointIndex)
+    {
+        var pointRef = zone.allPoints[pointIndex];
+
+        if (!pointRef.isShared)
+        {
+            // 로컬 포인트 삭제 로직 (기존과 같음)
+            zone.localPoints.RemoveAt(pointRef.index);
+            for (int j = 0; j < zone.allPoints.Count; j++)
+            {
+                if (!zone.allPoints[j].isShared && zone.allPoints[j].index > pointRef.index)
+                    zone.allPoints[j].index--;
+            }
+            zone.allPoints.RemoveAt(pointIndex);
+        }
+        else
+        {
+            // 공유 포인트는 현재 존에서만 참조 제거
+            int sharedIndex = pointRef.index;
+            zone.sharedPointIndices.Remove(sharedIndex);
+            zone.allPoints.RemoveAt(pointIndex);
+
+            // 이 공유점이 더 이상 어떤 존에서도 사용되지 않는지 확인
+            bool isUsedElsewhere = false;
+            foreach (var z in zoneData.zones)
+            {
+                if (z.sharedPointIndices.Contains(sharedIndex))
+                {
+                    isUsedElsewhere = true;
+                    break;
+                }
+            }
+
+            // 사용되지 않는 공유점이면 완전히 제거
+            if (!isUsedElsewhere)
+            {
+                RemoveSharedPointCompletely(sharedIndex);
+            }
+        }
+
+        EditorUtility.SetDirty(zoneData);
+    }
+
+    // 모든 영역에서 공유 포인트 삭제
+    private void RemovePointFromAllZones(MapZone zone, int pointIndex)
+    {
+        var pointRef = zone.allPoints[pointIndex];
+
+        if (!pointRef.isShared)
+        {
+            // 공유점이 아닌 경우 일반 삭제 수행
+            RemovePointFromCurrentZone(zone, pointIndex);
+            return;
+        }
+
+        // 공유점인 경우 모든 영역에서 제거
+        int sharedIndex = pointRef.index;
+        RemoveSharedPointCompletely(sharedIndex);
+
+        EditorUtility.SetDirty(zoneData);
+    }
+
+    // 공유점 완전히 제거 및 인덱스 재정렬
+    private void RemoveSharedPointCompletely(int sharedIndex)
+    {
+        // 공유점 제거
+        zoneData.sharedPoints.RemoveAt(sharedIndex);
+
+        // 모든 존에서 해당 공유점 참조 제거 및 인덱스 조정
+        foreach (var zone in zoneData.zones)
+        {
+            // 이 존의 공유점 인덱스 목록에서 제거
+            zone.sharedPointIndices.Remove(sharedIndex);
+
+            // 인덱스 재조정
+            for (int i = 0; i < zone.sharedPointIndices.Count; i++)
+            {
+                if (zone.sharedPointIndices[i] > sharedIndex)
+                    zone.sharedPointIndices[i]--;
+            }
+
+            // 존의 allPoints 목록에서 해당 공유점 참조 제거 및 인덱스 조정
+            for (int i = zone.allPoints.Count - 1; i >= 0; i--)
+            {
+                var pt = zone.allPoints[i];
+                if (pt.isShared)
+                {
+                    if (pt.index == sharedIndex)
+                    {
+                        zone.allPoints.RemoveAt(i);
+                    }
+                    else if (pt.index > sharedIndex)
+                    {
+                        pt.index--;
+                        zone.allPoints[i] = pt;
+                    }
+                }
+            }
+        }
+    }
     private void OnSceneGUI(SceneView sceneView)
     {
         if (zoneData == null || zoneData.zones.Count == 0) return;
 
         Event e = Event.current;
         Handles.zTest = UnityEngine.Rendering.CompareFunction.Always;
-
         MapZone currentZone = zoneData.zones[selectedZoneIndex];
 
         for (int zoneIdx = 0; zoneIdx < zoneData.zones.Count; zoneIdx++)
         {
-            MapZone zone = zoneData.zones[zoneIdx];
-            Handles.color = zone.zoneColor;
-
-            List<Vector3> resolvedPoints = ResolveAllPoints(zone);
-            if (resolvedPoints.Count >= 2)
-            {
-                DrawCatmullRomOpen(resolvedPoints.ToArray(), 10f, zone.zoneColor);
-            }
-
-            for (int i = 0; i < zone.allPoints.Count; i++)
-            {
-                Vector3 point = GetPoint(zone, zone.allPoints[i]);
-                float size = HandleUtility.GetHandleSize(point) * 0.1f;
-
-                if (Handles.Button(point, Quaternion.identity, size, size, Handles.SphereHandleCap))
-                {
-                    if (isPlacingSharedPoint && zoneIdx != selectedZoneIndex)
-                    {
-                        MapZonePointRef refClicked = zone.allPoints[i];
-                        if (refClicked.isShared)
-                        {
-                            if (!currentZone.sharedPointIndices.Contains(refClicked.index))
-                            {
-                                currentZone.sharedPointIndices.Add(refClicked.index);
-                                currentZone.allPoints.Add(new MapZonePointRef { isShared = true, index = refClicked.index });
-                                EditorUtility.SetDirty(zoneData);
-                                e.Use();
-                                return;
-                            }
-                        }
-                    }
-                    else if (zoneIdx == selectedZoneIndex)
-                    {
-                        if (e.shift)
-                        {
-                            Undo.RecordObject(zoneData, "Remove Point");
-                            RemovePoint(zone, i);
-                            e.Use();
-                            return;
-                        }
-                        else
-                        {
-                            draggingPointIndex = i;
-                            isDragging = true;
-                        }
-                    }
-                }
-
-                if (zoneIdx == selectedZoneIndex && isDragging && draggingPointIndex == i)
-                {
-                    Undo.RecordObject(zoneData, "Move Point");
-                    Vector3 newPos = Handles.PositionHandle(point, Quaternion.identity);
-                    SetPoint(zone, zone.allPoints[i], newPos);
-                    SceneView.RepaintAll();
-                }
-            }
+            if (zoneIdx == selectedZoneIndex) continue;
+            DrawZone(zoneIdx, e);
         }
-
+        if (selectedZoneIndex >= 0 && selectedZoneIndex < zoneData.zones.Count)
+        {
+            DrawZone(selectedZoneIndex, e, true);
+        }
         if (e.type == EventType.MouseUp)
         {
             isDragging = false;
@@ -174,6 +306,7 @@ public class MapZoneEditorTool : EditorWindow
             Vector3 point = ray.origin + ray.direction * 10;
             point.z = 0;
             Undo.RecordObject(zoneData, "Add Point");
+
             if (isPlacingSharedPoint)
             {
                 zoneData.sharedPoints.Add(point);
@@ -191,7 +324,6 @@ public class MapZoneEditorTool : EditorWindow
             e.Use();
         }
     }
-
     private Vector3 GetPoint(MapZone zone, MapZonePointRef pointRef)
     {
         return pointRef.isShared ? zoneData.sharedPoints[pointRef.index] : zone.localPoints[pointRef.index];
@@ -212,7 +344,47 @@ public class MapZoneEditorTool : EditorWindow
     private void RemovePoint(MapZone zone, int i)
     {
         var pointRef = zone.allPoints[i];
-        if (!pointRef.isShared)
+
+        if (pointRef.isShared)
+        {
+            // 공유점 제거 로직
+            int sharedIndex = pointRef.index;// 
+            zone.sharedPointIndices.Remove(sharedIndex);
+            zone.allPoints.RemoveAt(i);
+
+            // 공유점을 참조하는 모든 존 검사
+            int usageCount = -1;//반드시 하나 이상의 존과 연관되어 있을것..
+            foreach (var z in zoneData.zones)
+            {
+                if (z.sharedPointIndices.Contains(sharedIndex))
+                    usageCount++;
+            }
+
+            if (usageCount == 0)
+            {
+                // 해당 공유점 제거 및 인덱스 재정렬
+                zoneData.sharedPoints.RemoveAt(sharedIndex);// 공유점보관소: sharedPoints
+
+                foreach (var z in zoneData.zones)
+                {
+                    // sharedPointIndices 업데이트
+                    for (int j = 0; j < z.sharedPointIndices.Count; j++)
+                    {
+                        if (z.sharedPointIndices[j] > sharedIndex)
+                            z.sharedPointIndices[j]--;
+                    }
+
+                    // allPoints 인덱스 업데이트
+                    for (int j = 0; j < z.allPoints.Count; j++)
+                    {
+                        var refPt = z.allPoints[j];
+                        if (refPt.isShared && refPt.index > sharedIndex)
+                            refPt.index--;
+                    }
+                }
+            }
+        }
+        else
         {
             zone.localPoints.RemoveAt(pointRef.index);
             for (int j = 0; j < zone.allPoints.Count; j++)
@@ -220,10 +392,32 @@ public class MapZoneEditorTool : EditorWindow
                 if (!zone.allPoints[j].isShared && zone.allPoints[j].index > pointRef.index)
                     zone.allPoints[j].index--;
             }
+            zone.allPoints.RemoveAt(i);
         }
-        zone.allPoints.RemoveAt(i);
     }
+    private void ConvertLocalToShared(MapZone fromZone, int fromIndex, MapZone toZone)
+    {
+        Vector3 localPoint = fromZone.localPoints[fromZone.allPoints[fromIndex].index];
+        zoneData.sharedPoints.Add(localPoint);
+        int newSharedIndex = zoneData.sharedPoints.Count - 1;
 
+        // fromZone 업데이트
+        int oldLocalIdx = fromZone.allPoints[fromIndex].index;
+        fromZone.localPoints.RemoveAt(oldLocalIdx);
+        for (int j = 0; j < fromZone.allPoints.Count; j++)
+        {
+            if (!fromZone.allPoints[j].isShared && fromZone.allPoints[j].index > oldLocalIdx)
+                fromZone.allPoints[j].index--;
+        }
+        fromZone.sharedPointIndices.Add(newSharedIndex);
+        fromZone.allPoints[fromIndex] = new MapZonePointRef { isShared = true, index = newSharedIndex };
+
+        // toZone 업데이트
+        toZone.sharedPointIndices.Add(newSharedIndex);
+        toZone.allPoints.Add(new MapZonePointRef { isShared = true, index = newSharedIndex });
+
+        EditorUtility.SetDirty(zoneData);
+    }
     private List<Vector3> ResolveAllPoints(MapZone zone)
     {
         List<Vector3> result = new();

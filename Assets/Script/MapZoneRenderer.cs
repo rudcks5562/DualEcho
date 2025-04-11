@@ -163,8 +163,8 @@ public class MapZoneRenderer : MonoBehaviour
         lineRenderer.positionCount = points.Count;
 
         // 선 두께 설정
-        lineRenderer.startWidth = 0.05f;
-        lineRenderer.endWidth = 0.05f;
+        lineRenderer.startWidth = 0.25f;
+        lineRenderer.endWidth = 0.25f;
 
 
 
