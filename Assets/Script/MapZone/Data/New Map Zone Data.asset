@@ -13,27 +13,54 @@ MonoBehaviour:
   m_Name: New Map Zone Data
   m_EditorClassIdentifier: 
   sharedPoints:
-  - {x: 1.5585779, y: 17.184113, z: 0}
-  - {x: -3.688561, y: 20.059221, z: 0}
-  - {x: -4.3020654, y: 22.973368, z: 0}
+  - {x: -3.085422, y: 9.600231, z: 0}
+  - {x: 0.69314736, y: 9.248744, z: 0}
+  - {x: 2.974106, y: 9.529848, z: 0}
+  - {x: 5.112741, y: 9.529814, z: 0}
+  - {x: 6.8226423, y: 10.654349, z: 0}
+  - {x: -3.0803883, y: 3.977416, z: 0}
+  - {x: -3.0106106, y: 5.6642594, z: 0}
+  - {x: -3.2974608, y: 7.561964, z: 0}
+  - {x: 0.7691542, y: 3.977354, z: 0}
+  - {x: 4.6898584, y: 4.1178613, z: 0}
+  - {x: 8.895023, y: 5.0315013, z: 0}
+  - {x: -4.7192535, y: 3.1340203, z: 0}
+  - {x: -2.722439, y: 2.290566, z: 0}
+  - {x: -2.8640082, y: 1.1660055, z: 0}
+  - {x: -2.4337642, y: -1.645409, z: 0}
+  - {x: -0.7208431, y: -3.8945627, z: 0}
+  - {x: 0.27920005, y: -6.143705, z: 0}
+  - {x: 1.3504051, y: -8.252277, z: 0}
+  - {x: -12.989648, y: 4.258717, z: 0}
+  - {x: -10.993022, y: 3.6261177, z: 0}
+  - {x: -6.644277, y: 3.4151926, z: 0}
+  - {x: -4.931607, y: 1.4471794, z: 0}
+  - {x: -5.429678, y: 0.39290965, z: 0}
+  - {x: -6.3557277, y: -0.3802123, z: 0}
+  - {x: -7.9922643, y: -3.82416, z: 0}
+  - {x: -8.062168, y: -5.3704333, z: 0}
+  - {x: -10.19772, y: -8.814373, z: 0}
+  - {x: -9.629494, y: -6.4949713, z: 0}
+  - {x: -6.919801, y: -7.338437, z: 0}
+  - {x: -4.2091017, y: -9.306465, z: 0}
+  - {x: -1.3561413, y: -10.923071, z: 0}
+  - {x: -0.92992455, y: -9.236234, z: 0}
+  - {x: 0.8543475, y: -11.555674, z: 0}
+  - {x: 2.3533425, y: -13.734538, z: 0}
+  - {x: 1.214625, y: -15.843076, z: 0}
   zones:
   - zoneName: Zone 1
-    zoneColor: {r: 0.85221773, g: 0.091353446, b: 0.38976115, a: 0.38651767}
-    sharedPointIndices: 0100000002000000
+    zoneColor: {r: 0.063432455, g: 0.11931522, b: 0.9330999, a: 0.30608562}
+    sharedPointIndices: 0000000001000000020000000300000004000000
     localPoints:
-    - {x: -4.53213, y: 24.583813, z: 0}
-    - {x: -1.541296, y: 24.583813, z: 0}
-    - {x: 3.1366746, y: 24.890564, z: 0}
-    - {x: 7.2778287, y: 24.660501, z: 0}
-    - {x: 7.8146453, y: 22.7433, z: 0}
-    - {x: 6.8177004, y: 20.519346, z: 0}
-    - {x: 5.1645026, y: 19.23221, z: 0}
-    - {x: 4.060004, y: 18.65678, z: 0}
+    - {x: 5.1095953, y: 13.044073, z: 0}
+    - {x: 2.5396469, y: 17.050371, z: 0}
+    - {x: 0.044509716, y: 17.120697, z: 0}
+    - {x: -0.8807219, y: 15.433867, z: 0}
+    - {x: -1.6618677, y: 12.06019, z: 0}
     allPoints:
     - isShared: 1
-      index: 1
-    - isShared: 1
-      index: 2
+      index: 4
     - isShared: 0
       index: 0
     - isShared: 0
@@ -44,35 +71,129 @@ MonoBehaviour:
       index: 3
     - isShared: 0
       index: 4
-    - isShared: 0
-      index: 5
-    - isShared: 0
-      index: 6
-    - isShared: 0
-      index: 7
+    - isShared: 1
+      index: 0
+    - isShared: 1
+      index: 1
+    - isShared: 1
+      index: 2
+    - isShared: 1
+      index: 3
   - zoneName: Zone 2
-    zoneColor: {r: 0.52118915, g: 0.9386733, b: 0.10535397, a: 0.34322286}
-    sharedPointIndices: 000000000100000002000000
+    zoneColor: {r: 0.20401834, g: 0.9673076, b: 0.0790896, a: 0.36673045}
+    sharedPointIndices: 000000000100000002000000030000000400000005000000060000000700000008000000090000000a000000
     localPoints:
-    - {x: 8.811589, y: 5.4118023, z: 0}
-    - {x: 8.198085, y: 8.862764, z: 0}
-    - {x: 7.507893, y: 11.086718, z: 0}
-    - {x: 6.5109487, y: 12.773853, z: 0}
-    - {x: 5.2839394, y: 14.767742, z: 0}
-    - {x: 3.7501788, y: 16.301504, z: 0}
-    - {x: -6.449331, y: 22.819988, z: 0}
-    - {x: -7.292899, y: 20.902786, z: 0}
-    - {x: -9.440165, y: 18.295393, z: 0}
-    - {x: -9.670228, y: 16.224815, z: 0}
-    - {x: -6.449331, y: 11.700222, z: 0}
-    - {x: -3.228433, y: 9.322891, z: 0}
-    - {x: -2.9983685, y: 6.1019945, z: 0}
-    - {x: 0.6826573, y: 5.10505, z: 0}
-    - {x: 5.053876, y: 5.028362, z: 0}
-    - {x: 7.6612687, y: 5.028362, z: 0}
+    - {x: 8.392987, y: 8.405198, z: 0}
+    - {x: 8.893387, y: 6.8589163, z: 0}
+    allPoints:
+    - isShared: 1
+      index: 10
+    - isShared: 1
+      index: 9
+    - isShared: 1
+      index: 8
+    - isShared: 1
+      index: 5
+    - isShared: 1
+      index: 6
+    - isShared: 1
+      index: 7
+    - isShared: 1
+      index: 0
+    - isShared: 1
+      index: 1
+    - isShared: 1
+      index: 2
+    - isShared: 1
+      index: 3
+    - isShared: 1
+      index: 4
+    - isShared: 0
+      index: 0
+    - isShared: 0
+      index: 1
+  - zoneName: Zone 3
+    zoneColor: {r: 0.8301887, g: 0.17736739, b: 0.05873976, a: 0.46991098}
+    sharedPointIndices: 050000000600000007000000000000000b000000120000001300000014000000
+    localPoints:
+    - {x: -11.426412, y: 9.951793, z: 0}
+    - {x: -12.493276, y: 7.2106867, z: 0}
+    - {x: -6.079952, y: 10.092277, z: 0}
+    - {x: -8.361729, y: 10.72488, z: 0}
+    - {x: -9.929683, y: 10.303193, z: 0}
     allPoints:
     - isShared: 0
       index: 0
+    - isShared: 0
+      index: 1
+    - isShared: 1
+      index: 18
+    - isShared: 1
+      index: 19
+    - isShared: 1
+      index: 20
+    - isShared: 1
+      index: 11
+    - isShared: 1
+      index: 5
+    - isShared: 1
+      index: 6
+    - isShared: 1
+      index: 7
+    - isShared: 1
+      index: 0
+    - isShared: 0
+      index: 2
+    - isShared: 0
+      index: 3
+    - isShared: 0
+      index: 4
+  - zoneName: Zone 4
+    zoneColor: {r: 0.030499207, g: 0.9106975, b: 0.512457, a: 0.33033225}
+    sharedPointIndices: 0500000008000000090000000a0000000c0000000d0000000e0000000f0000001000000011000000200000002100000022000000
+    localPoints:
+    - {x: 2.3572438, y: -18.092218, z: 0}
+    - {x: 10.893475, y: 2.360632, z: 0}
+    - {x: 12.250082, y: -0.029086232, z: 0}
+    - {x: 12.822838, y: -2.7702177, z: 0}
+    - {x: 9.687055, y: -3.75416, z: 0}
+    - {x: 7.548293, y: -3.613555, z: 0}
+    - {x: 8.550098, y: -7.8306823, z: 0}
+    - {x: 8.69519, y: -10.642093, z: 0}
+    - {x: 8.199071, y: -13.875204, z: 0}
+    - {x: 6.9177136, y: -15.913452, z: 0}
+    - {x: 6.918846, y: -17.178585, z: 0}
+    - {x: 4.208273, y: -15.351128, z: 0}
+    - {x: 3.42568, y: -17.108244, z: 0}
+    allPoints:
+    - isShared: 0
+      index: 0
+    - isShared: 1
+      index: 34
+    - isShared: 1
+      index: 33
+    - isShared: 1
+      index: 32
+    - isShared: 1
+      index: 17
+    - isShared: 1
+      index: 16
+    - isShared: 1
+      index: 15
+    - isShared: 1
+      index: 14
+    - isShared: 1
+      index: 13
+    - isShared: 1
+      index: 12
+    - isShared: 1
+      index: 5
+    - isShared: 1
+      index: 8
+    - isShared: 1
+      index: 9
+    - isShared: 1
+      index: 10
     - isShared: 0
       index: 1
     - isShared: 0
@@ -83,12 +204,6 @@ MonoBehaviour:
       index: 4
     - isShared: 0
       index: 5
-    - isShared: 1
-      index: 0
-    - isShared: 1
-      index: 1
-    - isShared: 1
-      index: 2
     - isShared: 0
       index: 6
     - isShared: 0
@@ -103,9 +218,147 @@ MonoBehaviour:
       index: 11
     - isShared: 0
       index: 12
-    - isShared: 0
+  - zoneName: Zone 5
+    zoneColor: {r: 0.7259858, g: 0.18614274, b: 0.8396226, a: 0.322837}
+    sharedPointIndices: 0b000000050000000c0000000d0000000e0000000f000000100000001100000015000000160000001700000018000000190000001c0000001d0000001e0000001f000000
+    localPoints: []
+    allPoints:
+    - isShared: 1
+      index: 24
+    - isShared: 1
+      index: 23
+    - isShared: 1
+      index: 22
+    - isShared: 1
+      index: 21
+    - isShared: 1
+      index: 11
+    - isShared: 1
+      index: 5
+    - isShared: 1
+      index: 12
+    - isShared: 1
       index: 13
-    - isShared: 0
+    - isShared: 1
       index: 14
-    - isShared: 0
+    - isShared: 1
       index: 15
+    - isShared: 1
+      index: 16
+    - isShared: 1
+      index: 17
+    - isShared: 1
+      index: 31
+    - isShared: 1
+      index: 30
+    - isShared: 1
+      index: 29
+    - isShared: 1
+      index: 28
+    - isShared: 1
+      index: 25
+  - zoneName: Zone 6
+    zoneColor: {r: 0.9893849, g: 0.90546876, b: 0.15751256, a: 0.560555}
+    sharedPointIndices: 1200000013000000140000000b00000015000000160000001700000018000000190000001a0000001b000000
+    localPoints:
+    - {x: -13.058167, y: 1.1661698, z: 0}
+    - {x: -12.479307, y: -8.392625, z: 0}
+    - {x: -13.835663, y: -6.2840476, z: 0}
+    - {x: -14.123584, y: -3.191495, z: 0}
+    - {x: -13.627463, y: 0.041615725, z: 0}
+    allPoints:
+    - isShared: 0
+      index: 0
+    - isShared: 1
+      index: 18
+    - isShared: 1
+      index: 19
+    - isShared: 1
+      index: 20
+    - isShared: 1
+      index: 11
+    - isShared: 1
+      index: 21
+    - isShared: 1
+      index: 22
+    - isShared: 1
+      index: 23
+    - isShared: 1
+      index: 24
+    - isShared: 1
+      index: 25
+    - isShared: 1
+      index: 27
+    - isShared: 1
+      index: 26
+    - isShared: 0
+      index: 1
+    - isShared: 0
+      index: 2
+    - isShared: 0
+      index: 3
+    - isShared: 0
+      index: 4
+  - zoneName: Zone 7
+    zoneColor: {r: 0.042085785, g: 0.83903563, b: 0.86367124, a: 0.4884639}
+    sharedPointIndices: 1a0000001b000000190000001c0000001d0000001e0000001f00000011000000200000002100000022000000
+    localPoints:
+    - {x: -13.470353, y: -16.194265, z: 0}
+    - {x: -12.117645, y: -14.226301, z: 0}
+    - {x: -11.407095, y: -11.625761, z: 0}
+    - {x: -0.066857114, y: -17.740755, z: 0}
+    - {x: -2.8479004, y: -16.827002, z: 0}
+    - {x: -4.7025166, y: -15.561841, z: 0}
+    - {x: -6.0599427, y: -12.258414, z: 0}
+    - {x: -6.916215, y: -11.344693, z: 0}
+    - {x: -7.556169, y: -13.172098, z: 0}
+    - {x: -8.195368, y: -15.842924, z: 0}
+    - {x: -10.119259, y: -16.826885, z: 0}
+    - {x: -12.11538, y: -16.756569, z: 0}
+    allPoints:
+    - isShared: 0
+      index: 0
+    - isShared: 0
+      index: 1
+    - isShared: 0
+      index: 2
+    - isShared: 1
+      index: 26
+    - isShared: 1
+      index: 27
+    - isShared: 1
+      index: 25
+    - isShared: 1
+      index: 28
+    - isShared: 1
+      index: 29
+    - isShared: 1
+      index: 30
+    - isShared: 1
+      index: 31
+    - isShared: 1
+      index: 17
+    - isShared: 1
+      index: 32
+    - isShared: 1
+      index: 33
+    - isShared: 1
+      index: 34
+    - isShared: 0
+      index: 3
+    - isShared: 0
+      index: 4
+    - isShared: 0
+      index: 5
+    - isShared: 0
+      index: 6
+    - isShared: 0
+      index: 7
+    - isShared: 0
+      index: 8
+    - isShared: 0
+      index: 9
+    - isShared: 0
+      index: 10
+    - isShared: 0
+      index: 11
