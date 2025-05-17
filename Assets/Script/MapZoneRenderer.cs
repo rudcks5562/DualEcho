@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using LibTessDotNet;
+using System.Linq;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class MapZoneRenderer : MonoBehaviour
@@ -25,7 +26,10 @@ public class MapZoneRenderer : MonoBehaviour
 
             // 곡선 보간된 점 목록 (메쉬 생성용)
             List<Vector3> controlPoints = GetOrderedPoints(zone);
-            List<Vector3> curvedPoints = GenerateSmoothCurve(controlPoints, 10);
+            List<Vector3> curvedPoints = GenerateSmoothCurve(controlPoints, 30);
+            //List<Vector3> curve = GenerateSmoothCurve(segmentPoints, 10);
+
+            //List<Vector3> segment = ExtractSegmentFromCurve(curve, 10);
 
             GameObject zoneObj = new GameObject(zone.zoneName);
             zoneObj.transform.SetParent(transform);
@@ -173,8 +177,8 @@ public class MapZoneRenderer : MonoBehaviour
             lr.SetPosition(i, p);
         }
 
-        lr.startWidth = 0.08f;
-        lr.endWidth = 0.06f;
+        lr.startWidth = 0.2f;
+        lr.endWidth = 0.2f;
         lr.alignment = LineAlignment.TransformZ;
         obj.transform.forward = Camera.main.transform.forward;
     }
@@ -192,8 +196,8 @@ public class MapZoneRenderer : MonoBehaviour
         lineRenderer.positionCount = points.Count;
 
         // 선 두께 설정
-        lineRenderer.startWidth = 0.10f;
-        lineRenderer.endWidth = 0.06f;
+        lineRenderer.startWidth = 2f;
+        lineRenderer.endWidth = 2f;
 
         lineRenderer.alignment = LineAlignment.TransformZ;
         boundaryObj.transform.forward = Camera.main.transform.forward;
@@ -215,6 +219,8 @@ public class MapZoneRenderer : MonoBehaviour
     }
     Vector3 GetSafePoint(List<MapZonePointRef> refs, int index, MapZone zone)
     {
+        if (index < 0) return GetPointPosition(refs[0], zone); // or mirror
+        if (index >= refs.Count) return GetPointPosition(refs[refs.Count - 1], zone);
         int count = refs.Count;
         int safeIndex = (index + count) % count;
         return GetPointPosition(refs[safeIndex], zone);
@@ -257,13 +263,18 @@ public class MapZoneRenderer : MonoBehaviour
             if (curr.isShared && next.isShared)
             {
                 // 공유 ↔ 공유: 직선 처리
-                RenderLine(segmentPoints, $"Straight_{zone.zoneName}_{i}", zoneIndex);
+               // List<Vector3> curve = GenerateSmoothCurve(segmentPoints, 10);
+
+                //List<Vector3> segment = ExtractSegmentFromCurve(curve, 10);
+                RenderLine(segmentPoints.GetRange(1,2), $"Straight_{zone.zoneName}_{i}", zoneIndex);
+               // RenderLine(segment, $"Curved_{zone.zoneName}_{i}", zoneIndex);
+
+
             }
             else
             {
                 // 로컬 포함: 곡선 보간
                 List<Vector3> curve = GenerateSmoothCurve(segmentPoints, 10);
-
                 List<Vector3> segment = ExtractSegmentFromCurve(curve, 10);
                 RenderLine(segment, $"Curved_{zone.zoneName}_{i}", zoneIndex);
             }

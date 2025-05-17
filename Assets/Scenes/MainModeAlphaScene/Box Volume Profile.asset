@@ -32,7 +32,7 @@ MonoBehaviour:
   m_Name: Box Volume Profile
   m_EditorClassIdentifier: 
   components:
-  - {fileID: -5790311780992123203}
+  - {fileID: 6150365883577956974}
 --- !u!114 &1629744110529477796
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -52,3 +52,22 @@ MonoBehaviour:
   verticalBlur:
     m_OverrideState: 1
     m_Value: 0.0015
+--- !u!114 &6150365883577956974
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: CustomVolumeComponent
+  m_EditorClassIdentifier: Assembly-CSharp::CustomVolumeComponent
+  active: 1
+  horizontalBlur:
+    m_OverrideState: 1
+    m_Value: 0.0001
+  verticalBlur:
+    m_OverrideState: 1
+    m_Value: 0
