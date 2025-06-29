@@ -1,0 +1,43 @@
+{
+  
+    "Node_001": {
+      "name": "���� ����",
+      "cost": 10,
+      "iconId": "icon_001",
+      "connections": [ "Node_002", "Node_003" ],
+      "prerequisites": [],
+      "description": "���� �⺻���� �����Դϴ�."
+    }
+  ,
+
+  
+    "Node_002": {
+      "name": "���� ����",
+      "cost": 20,
+      "iconId": "icon_002",
+      "connections": [ "Node_004" ],
+      "prerequisites": [ "Node_001" ],
+      "description": "���� ���� ������ �ܰ��Դϴ�."
+    }
+  ,
+  
+    "Node_003": {
+      "name": "��ȭ ����",
+      "cost": 30,
+      "iconId": "icon_003",
+      "connections": [ "Node_004" ],
+      "prerequisites": [ "Node_001" ],
+      "description": "���� ���� ������ �ܰ��Դϴ�."
+    }
+  ,
+  
+    "Node_004": {
+      "name": "���� ����",
+      "cost": 40,
+      "iconId": "icon_004",
+      "connections": [ "Node_004" ],
+      "prerequisites": [ "Node_002", "Node_003" ],
+      "description": "���� �����ܰ��Դϴ�."
+    }
+  
+}

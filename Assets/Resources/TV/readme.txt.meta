@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 548f2209d96067e43b1189983f863236
+timeCreated: 1507136868
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 101886
+  packageName: Old Television PBR
+  packageVersion: 1.0
+  assetPath: Assets/TV/readme.txt
+  uploadId: 206946

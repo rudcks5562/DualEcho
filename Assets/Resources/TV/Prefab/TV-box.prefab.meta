@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 2e20a9d5d499bdb47989d3e52387e91b
+timeCreated: 1507135859
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 101886
+  packageName: Old Television PBR
+  packageVersion: 1.0
+  assetPath: Assets/TV/Prefab/TV-box.prefab
+  uploadId: 206946
